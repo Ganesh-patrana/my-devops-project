@@ -36,11 +36,11 @@ spec:
         stage('Deploy to K8s') {
             steps {
                 container('kubectl') {
-                    // Using variables and specifying the namespace
-                    sh "kubectl delete pod ${APP_NAME} -n ${NAMESPACE} --ignore-not-found"
-                    sh "kubectl run ${APP_NAME} --image=${IMAGE_NAME} --image-pull-policy=Never -n ${NAMESPACE}"
-                    
-                    echo "Deployment to ${NAMESPACE} complete!"
+                    sh '''
+                        kubectl delete pod ${APP_NAME} -n ${NAMESPACE} --ignore-not-found
+                        kubectl run ${APP_NAME} --image=${IMAGE_NAME} --image-pull-policy=Never -n ${NAMESPACE}
+                        echo "Deployment to ${NAMESPACE} complete!"
+                    '''
                 }
             }
         }
