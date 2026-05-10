@@ -14,6 +14,7 @@ spec:
     image: bitnami/kubectl:latest
     command: ["sleep"]
     args: ["99d"]
+    tty: true  # <--- CRITICAL FIX 1: Keeps the shell open
 '''
         }
     }
@@ -36,7 +37,8 @@ spec:
         stage('Deploy to K8s') {
             steps {
                 container('kubectl') {
-                    sh "kubectl delete pod ${APP_NAME} -n ${NAMESPACE} --ignore-not-found || true"
+                    // <--- CRITICAL FIX 2: Added a sleep to give the container time to boot
+                    sh "sleep 5 && kubectl delete pod ${APP_NAME} -n ${NAMESPACE} --ignore-not-found || true"
                     sh "kubectl run ${APP_NAME} --image=${IMAGE_NAME} --image-pull-policy=Never -n ${NAMESPACE}"
                 }
             }
