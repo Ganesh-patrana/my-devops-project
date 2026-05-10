@@ -11,10 +11,10 @@ spec:
     command: ["sleep"]
     args: ["99d"]
   - name: kubectl
-    image: bitnami/kubectl:latest
-    command: ["sleep"]
-    args: ["99d"]
-    tty: true  # <--- CRITICAL FIX 1: Keeps the shell open
+    # CRITICAL FIX: Swapped to a CI/CD friendly image that avoids permission conflicts
+    image: dtzar/helm-kubectl:latest
+    command: ["cat"]
+    tty: true
 '''
         }
     }
@@ -37,8 +37,8 @@ spec:
         stage('Deploy to K8s') {
             steps {
                 container('kubectl') {
-                    // <--- CRITICAL FIX 2: Added a sleep to give the container time to boot
-                    sh "sleep 5 && kubectl delete pod ${APP_NAME} -n ${NAMESPACE} --ignore-not-found || true"
+                    // Because we are using the right image, this will execute immediately
+                    sh "kubectl delete pod ${APP_NAME} -n ${NAMESPACE} --ignore-not-found || true"
                     sh "kubectl run ${APP_NAME} --image=${IMAGE_NAME} --image-pull-policy=Never -n ${NAMESPACE}"
                 }
             }
