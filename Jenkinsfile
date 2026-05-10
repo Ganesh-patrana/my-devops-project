@@ -11,9 +11,9 @@ spec:
     command: ["sleep"]
     args: ["99d"]
   - name: kubectl
-    image: alpine:3.18
-    command: ["sh"]
-    args: ["-c", "apk add --no-cache kubectl && sleep 99d"]
+    image: bitnami/kubectl:latest
+    command: ["sleep"]
+    args: ["99d"]
 '''
         }
     }
@@ -36,9 +36,8 @@ spec:
         stage('Deploy to K8s') {
             steps {
                 container('kubectl') {
-                    sh '/bin/sh -c "kubectl delete pod ${APP_NAME} -n ${NAMESPACE} --ignore-not-found || true"'
-                    sh '/bin/sh -c "kubectl run ${APP_NAME} --image=${IMAGE_NAME} --image-pull-policy=Never -n ${NAMESPACE}"'
-                    sh '/bin/sh -c "echo Deployment to ${NAMESPACE} complete"'
+                    sh "kubectl delete pod ${APP_NAME} -n ${NAMESPACE} --ignore-not-found || true"
+                    sh "kubectl run ${APP_NAME} --image=${IMAGE_NAME} --image-pull-policy=Never -n ${NAMESPACE}"
                 }
             }
         }
