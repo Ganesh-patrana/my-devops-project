@@ -17,20 +17,30 @@ spec:
 '''
         }
     }
+
+    environment {
+        APP_NAME = "ganesh-app"
+        NAMESPACE = "hyderabad-staging"
+        IMAGE_NAME = "my-python-app:latest"
+    }
+
     stages {
         stage('Build Image') {
             steps {
                 container('kaniko') {
-                    sh '/kaniko/executor --context `pwd` --dockerfile Dockerfile --destination my-python-app:latest --no-push'
-                    echo 'Image built successfully (local only for now)'
+                    sh "/kaniko/executor --context `pwd` --dockerfile Dockerfile --destination ${IMAGE_NAME} --no-push"
                 }
             }
         }
+
         stage('Deploy to K8s') {
             steps {
                 container('kubectl') {
-                    sh 'kubectl run ganesh-app --image=my-python-app:latest --image-pull-policy=Never --restart=Always'
-                    echo 'Application deployed to cluster!'
+                    // Using variables and specifying the namespace
+                    sh "kubectl delete pod ${APP_NAME} -n ${NAMESPACE} --ignore-not-found"
+                    sh "kubectl run ${APP_NAME} --image=${IMAGE_NAME} --image-pull-policy=Never -n ${NAMESPACE}"
+                    
+                    echo "Deployment to ${NAMESPACE} complete!"
                 }
             }
         }
