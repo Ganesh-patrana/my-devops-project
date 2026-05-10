@@ -11,16 +11,9 @@ spec:
     command: ["sleep"]
     args: ["99d"]
   - name: kubectl
-    image: bitnami/kubectl:1.30
+    image: alpine:3.18
     command: ["sh"]
-    args: ["-c", "sleep 99d"]
-    resources:
-      requests:
-        memory: "128Mi"
-        cpu: "50m"
-      limits:
-        memory: "256Mi"
-        cpu: "200m"
+    args: ["-c", "apk add --no-cache kubectl && sleep 99d"]
 '''
         }
     }
