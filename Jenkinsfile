@@ -11,9 +11,16 @@ spec:
     command: ["sleep"]
     args: ["99d"]
   - name: kubectl
-    image: bitnami/kubectl:latest
-    command: ["sleep"]
-    args: ["99d"]
+    image: bitnami/kubectl:1.30
+    command: ["sh"]
+    args: ["-c", "sleep 99d"]
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "50m"
+      limits:
+        memory: "256Mi"
+        cpu: "200m"
 '''
         }
     }
